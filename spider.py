@@ -3,14 +3,14 @@
 import sys
 import re
 import urlparse
-import urllib2
 import os
+import util
 
 
 def run(blogname):
-    # homeurl = "http://{0}.tumblr.com".format(blogname)
-    # archiveurl = "{0}/archive".format(homeurl)
-    fetch("http://xxoovideo.tumblr.com/archive?before_time=1432918563")
+    homeurl = "http://{0}.tumblr.com".format(blogname)
+    archiveurl = "{0}/archive".format(homeurl)
+    fetch(archiveurl)
     print 'all done!'
 
 
@@ -19,7 +19,7 @@ def fetch(url):
     with open('fetching.txt', 'w') as f:
         f.write(url)
 
-    page = download(url)
+    page = util.download(url)
 
     posts = find_all_posts(page)
 
