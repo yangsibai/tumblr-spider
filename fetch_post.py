@@ -7,14 +7,17 @@ import re
 def run():
     with open('posts.txt', 'r') as f:
         lines = f.readlines()
-        for l in lines:
-            url = l.strip()
-            src = fetch(url)
-            if src is not None:
-                print "source %s find at %s" % (src, url)
-            else:
-                print "no source at %s" % url
-            return
+        if len(lines) > 0:
+            with open("src.txt", 'a') as sf:
+                for l in lines:
+                    url = l.strip()
+                    src = fetch(url)
+                    if src is not None:
+                        print "source %s find at %s" % (src, url)
+                        sf.write(src + '\n')
+                    else:
+                        print "no source at %s" % url
+                    return
     print "all done!"
 
 
