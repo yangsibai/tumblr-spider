@@ -9,7 +9,10 @@ def run():
         lines = f.readlines()
         if len(lines) > 0:
             with open("src.txt", 'a') as sf:
+                i = 0
                 for l in lines:
+                    i += 1
+                    print "\n%d:" % i
                     url = l.strip()
                     src = fetch(url)
                     if src is not None:
@@ -17,7 +20,6 @@ def run():
                         sf.write(src + '\n')
                     else:
                         print "no source at %s" % url
-                    return
     print "all done!"
 
 
