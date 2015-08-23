@@ -29,6 +29,7 @@ def fetch(url):
 
 
 def get_real_page_data(url):
+    print "see if page contain real data: %s " % url
     data = util.download(url)
     src = get_iframe_url(data)
     if src is not None:
