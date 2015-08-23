@@ -11,8 +11,10 @@ def run():
             for l in lines:
                 src = get_iframe_url(l)
                 if src is not None:
+                    print "fetch success: %s" % src
                     fr.write(src + "\n")
-                return
+
+    print "all done"
 
 
 def get_iframe_url(url):
