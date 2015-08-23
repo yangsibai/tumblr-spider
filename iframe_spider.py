@@ -9,7 +9,6 @@ def run():
         lines = f.readlines()
         with open('iframes.txt', 'w') as fr:
             for l in lines:
-                print "fetching %s" % l
                 src = get_iframe_url(l)
                 if src is not None:
                     fr.write(src + "\n")
@@ -19,7 +18,7 @@ def run():
 def get_iframe_url(url):
     print 'fetching %s' % url
     page = util.download(url)
-    srcReg = re.compile('<iframe src="([^"]+)"', re.IGNORECASE | re.MULTILINE)
+    srcReg = re.compile('<iframe src=[\'"]([^\'"]+)[\'"]', re.IGNORECASE | re.MULTILINE)
     m = srcReg.search(page)
     if m is not None:
         return m.group(1)
