@@ -5,21 +5,20 @@ import re
 
 
 def run():
-    with open('posts.txt', 'r') as f:
-        lines = f.readlines()
-        if len(lines) > 0:
-            with open("src.txt", 'a') as sf:
-                i = 0
-                for l in lines:
-                    i += 1
-                    print "\n%d:" % i
-                    url = l.strip()
-                    src = fetch(url)
-                    if src is not None:
-                        print "source %s find at %s" % (src, url)
-                        sf.write(src + '\n')
-                    else:
-                        print "no source at %s" % url
+    posts = util.get_all_new_posts()
+    i = 0
+    for p in posts:
+        i += 1
+        print "\n%d:" % i
+        (PostID, URL, AddTime, State) = p
+        src = fetch(URL)
+        util.set_post_fetched(PostID)
+        if src is not None:
+            util.insert_source(PostID, src)
+            print "source %s find at %s" % (src, URL)
+        else:
+            print "no source at %s" % URL
+
     print "all done!"
 
 

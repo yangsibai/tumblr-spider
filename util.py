@@ -55,6 +55,12 @@ def insert_post(url):
     conn = get_conn()
     c = conn.cursor()
 
+    c.execute('SELECT * FROM Post WHERE URL = ?', (url, ))
+    if c.fetchone():
+        print '%s exists' % url
+        conn.close()
+        return
+
     c.execute('''INSERT INTO Post(URL, AddTime, State)
         VALUES(?, ?, ?)''', (url, time.time(), POST_STATE_NEW))
 
@@ -63,20 +69,15 @@ def insert_post(url):
     return c.lastrowid
 
 
-def get_all_new_posts():
-    conn = get_conn()
-    c = conn.cursor()
-
-    c.execute('''SELECT * FROM Post WHERE State = ?''', (POST_STATE_NEW, ))
-
-    conn.commit()
-    conn.close()
-    return c.fetchall()
-
-
 def insert_source(postid, sourceurl, type='video'):
     conn = get_conn()
     c = conn.cursor()
+
+    c.execute('SELECT * FROM Source WHERE URL = ?', (sourceurl, ))
+    if c.fetchone():
+        print '%s exists' % sourceurl
+        conn.close()
+        return
 
     c.execute('''INSERT INTO Source(PostID, URL, Type)
         VALUES(?, ?, ?)''', (postid, sourceurl, type))
@@ -98,8 +99,28 @@ def set_post_fetched(postid):
     conn.close()
 
 
+def get_all_new_posts():
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute('''SELECT * FROM Post WHERE State = ?''', (POST_STATE_NEW, ))
+    posts = c.fetchall()
+    conn.close()
+    return posts
+
+
 def get_all_posts():
     conn = get_conn()
     c = conn.cursor()
     c.execute('''SELECT * FROM Post''')
-    return c.fetchall()
+    posts = c.fetchall()
+    conn.close()
+    return posts
+
+
+def get_all_sources():
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute('SELECT * FROM Source')
+    sources = c.fetchall()
+    conn.close()
+    return sources
