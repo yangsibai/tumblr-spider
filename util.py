@@ -116,6 +116,9 @@ def get_all_posts():
     conn.close()
     return posts
 
+SOURCE_STATE_NEW = 0
+SOURCE_STATE_DOWNLOADED = 1
+
 
 def get_all_sources():
     conn = get_conn()
@@ -124,3 +127,20 @@ def get_all_sources():
     sources = c.fetchall()
     conn.close()
     return sources
+
+
+def get_all_new_sources():
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute('SELECT * FROM Source WHERE State = ?', (SOURCE_STATE_NEW, ))
+    sources = c.fetchall()
+    conn.close()
+    return sources
+
+
+def set_source_downloaded(sourceid):
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute('UPDATE Source SET State = ? WHERE SourceID = ?',
+              (SOURCE_STATE_DOWNLOADED, sourceid))
+    conn.commit()

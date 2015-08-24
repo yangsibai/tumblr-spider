@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 
 import wget
+import util
 
 
 def run():
-    with open('src.txt', 'r') as f:
-        lines = f.readlines()
-        for l in lines:
-            download(l)
-            return
+    sources = util.get_all_new_sources()
+    i = 0
+    for src in sources:
+        i += 1
+        (SourceID, PostID, URL, Type) = src
+        print '%d %s' % (i, URL)
+        download(URL)
+        util.set_source_downloaded(SourceID)
+
     print "all done!"
 
 
