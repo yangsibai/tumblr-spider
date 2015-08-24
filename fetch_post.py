@@ -2,6 +2,7 @@
 
 import util
 import re
+import sys
 
 
 def run():
@@ -25,13 +26,19 @@ def run():
 def fetch(url):
     print "fetching %s" % url
     page = get_real_page_data(url)
-    src = get_source_url(page)
-    return src
+    if page:
+        src = get_source_url(page)
+        return src
+    return None
 
 
 def get_real_page_data(url):
     print "see if page contain real data: %s " % url
-    data = util.download(url)
+    try:
+        data = util.download(url)
+    except:
+        print "error occurred at %s : %s" % (url, sys.exc_info()[0])
+        return None
     src = get_iframe_url(data)
     if src is not None:
         print "iframe found, look into: %s" % src
