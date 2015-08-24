@@ -9,7 +9,7 @@ def run():
     i = 0
     for src in sources:
         i += 1
-        (SourceID, PostID, URL, Type) = src
+        (SourceID, PostID, URL, Type, State) = src
         print '%d %s' % (i, URL)
         download(URL)
         util.set_source_downloaded(SourceID)
