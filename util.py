@@ -2,6 +2,12 @@
 
 import urllib2
 import urlparse
+import sqlite3
+import time
+
+
+POST_STATE_NEW = 0
+POST_STATE_FETCHED = 1
 
 
 def download(url):
@@ -18,3 +24,75 @@ def download(url):
     req = urllib2.Request(url, headers=hdr)
     page = urllib2.urlopen(req)
     return page.read()
+
+
+def get_conn():
+    """
+        get db connection
+    """
+    return sqlite3.connect('tumblr.db')
+
+
+def create_table():
+    conn = get_conn()
+    c = conn.cursor()
+
+    # create table posts
+    c.execute('''CREATE TABLE IF NOT EXISTS Post(
+        PostID INTEGER PRIMARY KEY AUTOINCREMENT,
+        URL TEXT, AddTime INTEGER, State INTEGER)''')
+
+    # create table sources
+    c.execute('''CREATE TABLE IF NOT EXISTS Source(
+        SourceID INTEGER PRIMARY KEY AUTOINCREMENT,
+        PostID INTEGER, URL TEXT, Type TEXT)''')
+
+    conn.commit()
+    conn.close()
+
+
+def insert_post(url):
+    conn = get_conn()
+    c = conn.cursor()
+
+    c.execute('''INSERT INTO Post(URL, AddTime, State)
+        VALUES(?, ?, ?)''', (url, time.time(), POST_STATE_NEW))
+
+    conn.commit()
+    conn.close()
+    return c.lastrowid
+
+
+def get_all_new_posts():
+    conn = get_conn()
+    c = conn.cursor()
+
+    c.execute('''SELECT * FROM Post WHERE State = ?''', (POST_STATE_NEW, ))
+
+    conn.commit()
+    conn.close()
+    return c.fetchall()
+
+
+def insert_source(postid, sourceurl, type='video'):
+    conn = get_conn()
+    c = conn.cursor()
+
+    c.execute('''INSERT INTO Source(PostID, URL, Type)
+        VALUES(?, ?, ?)''', (postid, sourceurl, type))
+
+    conn.commit()
+    conn.close()
+    return c.lastrowid
+
+
+def set_post_fetched(postid):
+    conn = get_conn()
+    c = conn.cursor()
+
+    c.execute('''UPDATE Post
+        SET State = ?
+        WHERE PostID = ?''', (POST_STATE_FETCHED, postid))
+
+    conn.commit()
+    conn.close()

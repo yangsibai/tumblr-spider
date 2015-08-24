@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import util
+import wget
 
 
 def run():
@@ -14,9 +14,8 @@ def run():
 
 def download(url):
     print "downloading %s" % url
-    d = util.download(url)
-    with open('test.mp4', 'w') as f:
-        f.write(d)
+    filename = wget.download(url)
+    print filename
 
 
 if __name__ == "__main__":

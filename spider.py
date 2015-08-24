@@ -3,7 +3,6 @@
 import sys
 import re
 import urlparse
-import os
 import util
 
 
@@ -16,43 +15,38 @@ def run(blogname):
 
 def fetch(url):
     print "fetching %s" % url
-    with open('fetching.txt', 'w') as f:
-        f.write(url)
-
     page = util.download(url)
-
     posts = find_all_posts(page)
-
-    with open('posts.txt', 'a') as f:
-        [f.write(p + '\n') for p in posts]
+    if len(posts) > 0:
+        [util.insert_post(p) for p in posts]
         print "%d posts fetched" % len(posts)
-
-    next_page_link = find_next_page_url(page)
-
-    if next_page_link is not None:
-        return fetch(urlparse.urljoin(url, next_page_link))
+        next_page_link = find_next_page_url(page)
+        if next_page_link is not None:
+            return fetch(urlparse.urljoin(url, next_page_link))
+        else:
+            return
     else:
-        os.unlink("fetching.txt")
         return
 
 
 def find_all_posts(content):
-    postRegex = re.compile("http://[^.]+.tumblr.com/post/\d+[^\"]", re.IGNORECASE | re.MULTILINE)
-    matches = postRegex.findall(content)
+    pattern = re.compile("http://[^.]+.tumblr.com/post/\d+[^\"]", re.IGNORECASE | re.MULTILINE)
+    matches = pattern.findall(content)
     return matches
 
 
 def find_next_page_url(content):
-    nextPageRegex = re.compile("(/archive\?before_time=\d+)",
+    pattern = re.compile("(/archive\?before_time=\d+)",
                                re.IGNORECASE | re.MULTILINE)
-    nextPageMatch = nextPageRegex.search(content)
-    if nextPageMatch != None:
-        return nextPageMatch.group(1)
+    match = pattern.search(content)
+    if match is not None:
+        return match.group(1)
     return None
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
+        util.create_table()
         run(sys.argv[1])
     else:
         print "invalid request, sample: python spider.py massimo"
