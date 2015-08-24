@@ -2,6 +2,7 @@
 
 import wget
 import util
+import sys
 
 
 def run():
@@ -19,8 +20,10 @@ def run():
 
 def download(url):
     print "downloading %s" % url
-    filename = wget.download(url)
-    print filename
+    try:
+        wget.download(url)
+    except:
+        print 'error occurred at %s : %s' % (url, sys.exc_info()[0])
 
 
 if __name__ == "__main__":
