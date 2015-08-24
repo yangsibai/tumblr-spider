@@ -96,3 +96,10 @@ def set_post_fetched(postid):
 
     conn.commit()
     conn.close()
+
+
+def get_all_posts():
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute('''SELECT * FROM Post''')
+    return c.fetchall()
