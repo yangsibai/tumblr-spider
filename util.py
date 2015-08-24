@@ -45,7 +45,7 @@ def create_table():
     # create table sources
     c.execute('''CREATE TABLE IF NOT EXISTS Source(
         SourceID INTEGER PRIMARY KEY AUTOINCREMENT,
-        PostID INTEGER, URL TEXT, Type TEXT)''')
+        PostID INTEGER, URL TEXT, Type TEXT, State Integer)''')
 
     conn.commit()
     conn.close()
@@ -79,8 +79,8 @@ def insert_source(postid, sourceurl, type='video'):
         conn.close()
         return
 
-    c.execute('''INSERT INTO Source(PostID, URL, Type)
-        VALUES(?, ?, ?)''', (postid, sourceurl, type))
+    c.execute('''INSERT INTO Source(PostID, URL, Type, State)
+        VALUES(?, ?, ?, ?)''', (postid, sourceurl, type, SOURCE_STATE_NEW))
 
     conn.commit()
     conn.close()

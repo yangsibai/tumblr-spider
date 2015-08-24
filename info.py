@@ -25,7 +25,13 @@ def print_posts(l):
 
 
 def print_source(l):
-    print '%d %d %s %s' % l
+    (SourceID, PostID, URL, Type, State) = l
+    state = 'unknown'
+    if State == 0:
+        state = 'new'
+    elif State == 1:
+        state = 'downloaded'
+    print '%d %d %s %s %s' % (SourceID, PostID, URL, Type, state)
 
 
 if __name__ == "__main__":
